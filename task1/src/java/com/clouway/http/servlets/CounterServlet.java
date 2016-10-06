@@ -31,10 +31,8 @@ public class CounterServlet extends HttpServlet {
         String param = request.getParameter("id");
 
         if (param != null) {
-            if(param.equals("one") || param.equals("two") || param.equals("three")) {
-                temporary = Integer.parseInt(links.get(param));
-                links.put(param, Integer.toString(++temporary));
-            }
+            temporary = Integer.parseInt(links.get(param));
+            links.put(param, Integer.toString(++temporary));
         }
 
         try {
