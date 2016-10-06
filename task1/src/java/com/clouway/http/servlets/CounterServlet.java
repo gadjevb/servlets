@@ -1,63 +1,53 @@
 package com.clouway.http.servlets;
 
 import com.clouway.http.core.Template;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * @author Borislav Gadjev <gadjevb@gmail.com>
  */
 public class CounterServlet extends HttpServlet {
     private Template template;
-    private Map<String, Integer> links;
+    private LinkedHashMap<String, String> links;
     private Integer temporary;
+    private String page;
 
-    public CounterServlet(Map<String, Integer> links) {
+    public CounterServlet(LinkedHashMap<String, String> links) {
         this.links = links;
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        if (request.getParameter("id") != null) {
-            if (request.getParameter("id").equals("one")) {
-                temporary = links.get("one");
-                links.put("one", ++temporary);
-            } else if (request.getParameter("id").equals("two")) {
-                temporary = links.get("two");
-                links.put("two", ++temporary);
-            } else if (request.getParameter("id").equals("three")) {
-                temporary = links.get("three");
-                links.put("three", ++temporary);
+        String param = request.getParameter("id");
+
+        if (param != null) {
+            if(param.equals("one") || param.equals("two") || param.equals("three")) {
+                temporary = Integer.parseInt(links.get(param));
+                links.put(param, Integer.toString(++temporary));
             }
         }
 
-        try (BufferedReader br = new BufferedReader(new FileReader("src/java/com/clouway/http/resources/Counter.html"))) {
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.lineSeparator());
-                line = br.readLine();
-            }
-
-            template = new Template(sb.toString());
-            template.put("link1", links.get("one").toString());
-            template.put("link2", links.get("two").toString());
-            template.put("link3", links.get("three").toString());
-
-            String page = template.evaluate();
-
-            response.setContentType("text/html");
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().println(page);
+        try {
+            page = Files.toString(new File("src/java/com/clouway/http/resources/Counter.html"), Charsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        template = new Template(page, links);
+        page = template.evaluate();
+
+        response.setContentType("text/html");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().println(page);
     }
 }

@@ -2,6 +2,8 @@ package com.clouway.http.core;
 
 import org.junit.Test;
 
+import java.util.LinkedHashMap;
+
 import static org.junit.Assert.assertTrue;
 
 
@@ -10,10 +12,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class TemplateTest {
 
+    private LinkedHashMap<String, String> links;
+
     @Test
     public void singleVariable() {
-        Template template = new Template("Hello, ${name}");
-        template.put("name", "John");
+        links  = new LinkedHashMap();
+        links.put("name", "John");
+        Template template = new Template("Hello, ${name}", links);
 
         String result = template.evaluate();
 
@@ -22,10 +27,10 @@ public class TemplateTest {
 
     @Test
     public void manyVariables() {
-        Template template = new Template("Hello, ${name} it's ${goodToKnowThis}");
-
-        template.put("name", "John");
-        template.put("goodToKnowThis", "good to know that you are here.");
+        links  = new LinkedHashMap();
+        links.put("name", "John");
+        links.put("goodToKnowThis", "good to know that you are here.");
+        Template template = new Template("Hello, ${name} it's ${goodToKnowThis}", links);
 
         String result = template.evaluate();
 

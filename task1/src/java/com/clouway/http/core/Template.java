@@ -7,16 +7,12 @@ import java.util.Map;
  * @author Borislav Gadjev <gadjevb@gmail.com>
  */
 public class Template {
-    private final Map<String, String> placeHolderToValue = new LinkedHashMap<>();
+    private final Map<String, String> placeHolderToValue;
     private final String templateValue;
 
-    public Template(String templateValue) {
+    public Template(String templateValue, LinkedHashMap placeHolderToValue) {
+        this.placeHolderToValue = placeHolderToValue;
         this.templateValue = templateValue;
-    }
-
-
-    public void put(String placeHolder, String value) {
-        placeHolderToValue.put(placeHolder, value);
     }
 
     public String evaluate() {

@@ -9,8 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 import static org.junit.Assert.assertTrue;
 
@@ -23,24 +22,22 @@ public class CounterServletTest {
     private HttpServletRequest request = context.mock(HttpServletRequest.class);
     private HttpServletResponse response = context.mock(HttpServletResponse.class);
 
-    private Map<String, Integer> links = new HashMap();
+    private LinkedHashMap<String, String> links = new LinkedHashMap();
 
     @Before
     public void setUp(){
-        links.put("one" ,0);
-        links.put("two" ,0);
-        links.put("three" ,0);
+        links.put("one" ,"0");
+        links.put("two" ,"0");
+        links.put("three" ,"0");
     }
 
     @Test
-    public void oneLinkClicked() throws ServletException, IOException {
+    public void happyPath() throws ServletException, IOException {
         CounterServlet counter = new CounterServlet(links);
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         context.checking(new Expectations() {
             {
-                oneOf(request).getParameter("id");
-                will(returnValue("one"));
                 oneOf(request).getParameter("id");
                 will(returnValue("one"));
 
