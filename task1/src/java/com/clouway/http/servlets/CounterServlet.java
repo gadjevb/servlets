@@ -37,15 +37,15 @@ public class CounterServlet extends HttpServlet {
 
         try {
             page = Files.toString(new File("src/java/com/clouway/http/resources/Counter.html"), Charsets.UTF_8);
+            response.setStatus(HttpServletResponse.SC_OK);
         } catch (IOException e) {
-            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
 
         template = new Template(page, links);
         page = template.evaluate();
 
         response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().println(page);
     }
 }
