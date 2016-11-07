@@ -1,9 +1,6 @@
 package com.clouway.servlets;
 
-import com.clouway.core.Customer;
-import com.clouway.core.CustomerRepository;
-import com.clouway.core.Provider;
-import com.clouway.core.Template;
+import com.clouway.core.*;
 import com.clouway.http.servlets.TransactionPageServlet;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -29,9 +26,9 @@ public class TransactionPageServletTest {
     private HttpServletRequest request = context.mock(HttpServletRequest.class);
     private HttpServletResponse response = context.mock(HttpServletResponse.class);
     private HttpSession session = context.mock(HttpSession.class);
-    private Template template = context.mock(Template.class);
+    private ServletPageRenderer pageRenderer = context.mock(ServletPageRenderer.class);
     private CustomerRepository repository = context.mock(CustomerRepository.class);
-    private TransactionPageServlet transactionPageServlet = new TransactionPageServlet(template, repository);
+    private TransactionPageServlet transactionPageServlet = new TransactionPageServlet(pageRenderer, repository);
 
     @Test
     public void happyPath() throws ServletException, IOException {
@@ -44,9 +41,6 @@ public class TransactionPageServletTest {
                 oneOf(session).getAttribute("username");
                 will(returnValue("Borislav"));
 
-                oneOf(template).put("username", "Borislav");
-                oneOf(template).put("warning", "");
-                oneOf(template).evaluate();
                 will(returnValue("User is Borislav"));
 
                 oneOf(response).setContentType("text/html");
@@ -131,9 +125,6 @@ public class TransactionPageServletTest {
             oneOf(request).getParameter("amount");
             will(returnValue("2500"));
 
-            oneOf(template).put("username", "Borislav");
-            oneOf(template).put("warning", insufficientFunds);
-            oneOf(template).evaluate();
             will(returnValue("Insufficient funds!"));
 
             oneOf(response).setContentType("text/html");

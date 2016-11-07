@@ -2,6 +2,7 @@ package com.clouway.servlets;
 
 import com.clouway.core.*;
 import com.clouway.http.servlets.LoginPageServlet;
+import com.google.common.collect.ImmutableMap;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
@@ -16,6 +17,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,8 +33,8 @@ public class LoginPageServletTest {
     private HttpServletResponse response = context.mock(HttpServletResponse.class);
     private CustomerRepository customerRepository = context.mock(CustomerRepository.class);
     private SessionRepository sessionRepository = context.mock(SessionRepository.class);
-    private Template template = context.mock(Template.class);
-    private LoginPageServlet loginPageServlet = new LoginPageServlet(template, customerRepository, sessionRepository);
+    private ServletPageRenderer pageRenderer = context.mock(ServletPageRenderer.class);
+    private LoginPageServlet loginPageServlet = new LoginPageServlet(pageRenderer, customerRepository, sessionRepository);
     private HttpSession session = context.mock(HttpSession.class);
     private String warning = "<div class=\"alert alert-danger\"><strong>Username or password don't match!</strong></div>";
 
@@ -40,9 +43,9 @@ public class LoginPageServletTest {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         context.checking(new Expectations() {{
-            oneOf(template).put("warning", "");
-            oneOf(template).evaluate();
-            will(returnValue("Login page"));
+            oneOf(pageRenderer).renderPage("login.html",  ImmutableMap.of(
+                    "warning", ""
+            ), response, 200);
 
             oneOf(response).setContentType("text/html");
             oneOf(response).setStatus(200);
@@ -94,8 +97,7 @@ public class LoginPageServletTest {
             oneOf(customerRepository).getByName("Borislav");
             will(returnValue(Optional.empty()));
 
-            oneOf(template).put("warning", warning);
-            oneOf(template).evaluate();
+
             will(returnValue("Wrong username"));
 
             oneOf(response).setContentType("text/html");
@@ -124,8 +126,7 @@ public class LoginPageServletTest {
             oneOf(customerRepository).getByName("Borislav");
             will(returnValue(Optional.of(new Customer(0, "Borislav", "password", 0))));
 
-            oneOf(template).put("warning", warning);
-            oneOf(template).evaluate();
+
             will(returnValue("Wrong pass"));
 
             oneOf(response).setContentType("text/html");

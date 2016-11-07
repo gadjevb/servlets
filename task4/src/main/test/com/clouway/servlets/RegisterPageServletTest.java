@@ -2,6 +2,7 @@ package com.clouway.servlets;
 
 import com.clouway.core.Customer;
 import com.clouway.core.CustomerRepository;
+import com.clouway.core.ServletPageRenderer;
 import com.clouway.core.Template;
 import com.clouway.http.servlets.RegisterPageServlet;
 import org.jmock.Expectations;
@@ -29,16 +30,15 @@ public class RegisterPageServletTest {
     private HttpServletRequest request = context.mock(HttpServletRequest.class);
     private HttpServletResponse response = context.mock(HttpServletResponse.class);
     private CustomerRepository repository = context.mock(CustomerRepository.class);
-    private Template template = context.mock(Template.class);
-    private RegisterPageServlet registerPageServlet = new RegisterPageServlet(repository, template);
+    private ServletPageRenderer pageRenderer = context.mock(ServletPageRenderer.class);
+    private RegisterPageServlet registerPageServlet = new RegisterPageServlet(repository, pageRenderer);
 
     @Test
     public void happyPath() throws ServletException, IOException {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
         context.checking(new Expectations() {{
-            oneOf(template).put("warning", "");
-            oneOf(template).evaluate();
+
             will(returnValue("Register"));
 
             oneOf(response).setContentType("text/html");
@@ -82,8 +82,7 @@ public class RegisterPageServletTest {
             oneOf(repository).getByName("Borislav");
             will(returnValue(Optional.of(new Customer(1, "Borislav", "mypassword", 0))));
 
-            oneOf(template).put("warning", warning);
-            oneOf(template).evaluate();
+
             will(returnValue("Name is taken"));
 
             oneOf(response).setContentType("text/html");

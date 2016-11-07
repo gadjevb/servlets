@@ -18,9 +18,17 @@
         <servlet-name>login</servlet-name>
         <servlet-class>com.clouway.http.servlets.LoginPageServlet</servlet-class>
     </servlet>
-        <servlet>
+    <servlet>
         <servlet-name>transaction</servlet-name>
         <servlet-class>com.clouway.http.servlets.TransactionPageServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>history</servlet-name>
+        <servlet-class>com.clouway.http.servlets.TransactionHistoryServlet</servlet-class>
+    </servlet>
+    <servlet>
+    <servlet-name>historyView</servlet-name>
+    <servlet-class>com.clouway.http.servlets.TransactionHistoryViewServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -38,5 +46,13 @@
     <servlet-mapping>
         <servlet-name>transaction</servlet-name>
         <url-pattern>/transaction</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>history</servlet-name>
+        <url-pattern>/history</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>historyView</servlet-name>
+        <url-pattern>/historyView</url-pattern>
     </servlet-mapping>
 </web-app>
