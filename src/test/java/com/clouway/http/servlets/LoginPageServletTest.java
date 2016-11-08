@@ -70,7 +70,7 @@ public class LoginPageServletTest {
   public void wrongUsername() throws Exception {
     FakeHttpServletRequest request = createRequest(
             ImmutableMap.of(
-                    "name", "John",
+                    "name", "Johasdasdn",
                     "password", "pwd"
             )
     );
