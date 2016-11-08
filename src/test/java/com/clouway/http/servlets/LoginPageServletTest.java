@@ -50,7 +50,7 @@ public class LoginPageServletTest {
   public void login() throws Exception {
     FakeHttpServletRequest request = createRequest(
             ImmutableMap.of(
-                    "name", "John",
+                    "name", "add",
                     "password", "pwd"
             )
     );
