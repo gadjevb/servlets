@@ -56,12 +56,13 @@ public class RegistrationPageServletTest {
 
   @Test
   public void takenUsername() throws Exception {
-    request.setParameter("name", "John");
+    request.setParameter("name", "Johnathan");
+    request.setParameter("password", "password");
     response.setWriter(writer);
 
     context.checking(new Expectations() {{
-      oneOf(repo).getByName("John");
-      will(returnValue(Optional.of(new Account("John", "pwd", 0))));
+      oneOf(repo).getByName("Johnathan");
+      will(returnValue(Optional.of(new Account("Johnathan", "password", 0))));
 
       oneOf(servletResponseWriter).renderPage("register.html", Collections.singletonMap("error", "Username is taken"), response);
     }});
@@ -70,15 +71,28 @@ public class RegistrationPageServletTest {
   }
 
   @Test
-  public void register() throws Exception {
+  public void wrongInput() throws Exception {
     request.setParameter("name", "John");
-    request.setParameter("password", "Johny");
+    request.setParameter("password","password");
     response.setWriter(writer);
 
     context.checking(new Expectations() {{
-      oneOf(repo).getByName("John");
+      oneOf(servletResponseWriter).renderPage("register.html", Collections.singletonMap("error", "Wrong input"), response);
+    }});
+
+    servlet.doPost(request, response);
+  }
+
+  @Test
+  public void register() throws Exception {
+    request.setParameter("name", "Johnathan");
+    request.setParameter("password", "password");
+    response.setWriter(writer);
+
+    context.checking(new Expectations() {{
+      oneOf(repo).getByName("Johnathan");
       will(returnValue(Optional.empty()));
-      oneOf(repo).register(new Account("John", "Johny", 0));
+      oneOf(repo).register(new Account("Johnathan", "password", 0));
     }});
 
     servlet.doPost(request, response);

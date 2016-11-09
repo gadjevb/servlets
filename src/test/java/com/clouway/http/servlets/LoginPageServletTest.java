@@ -50,15 +50,15 @@ public class LoginPageServletTest {
   public void login() throws Exception {
     FakeHttpServletRequest request = createRequest(
             ImmutableMap.of(
-                    "name", "John",
-                    "password", "pwd"
+                    "name", "Johnathan",
+                    "password", "password"
             )
     );
     FakeHttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
-      oneOf(repo).getByName("John");
-      will(returnValue(Optional.of(new Account("John", "pwd", 0))));
+      oneOf(repo).getByName("Johnathan");
+      will(returnValue(Optional.of(new Account("Johnathan", "password", 0))));
 
     }});
 
@@ -70,14 +70,14 @@ public class LoginPageServletTest {
   public void wrongUsername() throws Exception {
     FakeHttpServletRequest request = createRequest(
             ImmutableMap.of(
-                    "name", "John",
-                    "password", "pwd"
+                    "name", "Johnathan",
+                    "password", "password"
             )
     );
     final HttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
-      oneOf(repo).getByName("John");
+      oneOf(repo).getByName("Johnathan");
       will(returnValue(Optional.empty()));
 
       oneOf(servletResponseWriter).renderPage("login.html", Collections.singletonMap("error", "Wrong username"), response);
@@ -90,17 +90,34 @@ public class LoginPageServletTest {
   public void wrongPassword() throws Exception {
     FakeHttpServletRequest request = createRequest(
             ImmutableMap.of(
-                    "name", "John",
-                    "password", "pwd"
+                    "name", "Johnathan",
+                    "password", "wrongPassword"
             )
     );
     HttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
-      oneOf(repo).getByName("John");
-      will(returnValue(Optional.of(new Account("John", "wrong", 0))));
+      oneOf(repo).getByName("Johnathan");
+      will(returnValue(Optional.of(new Account("Johnathan", "password", 0))));
 
       oneOf(servletResponseWriter).renderPage("login.html", Collections.singletonMap("error", "Wrong password"), response);
+    }});
+
+    servlet.doPost(request, response);
+  }
+
+  @Test
+  public void wrongInput() throws Exception {
+    FakeHttpServletRequest request = createRequest(
+            ImmutableMap.of(
+                    "name", "John",
+                    "password", "wrong"
+            )
+    );
+    HttpServletResponse response = createResponse();
+
+    context.checking(new Expectations() {{
+      oneOf(servletResponseWriter).renderPage("login.html", Collections.singletonMap("error", "Wrong input"), response);
     }});
 
     servlet.doPost(request, response);

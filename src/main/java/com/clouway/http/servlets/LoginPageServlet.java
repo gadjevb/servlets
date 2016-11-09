@@ -3,6 +3,7 @@ package com.clouway.http.servlets;
 import com.clouway.core.Account;
 import com.clouway.core.AccountRepository;
 import com.clouway.core.ServletPageRenderer;
+import com.clouway.core.Validator;
 import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.adapter.jdbc.PersistentAccountRepository;
 import com.clouway.persistent.datastore.DataStore;
@@ -45,6 +46,13 @@ public class LoginPageServlet extends HttpServlet {
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String name = req.getParameter("name");
     String pswd = req.getParameter("password");
+    Validator validator = new Validator();
+
+    if (!validator.validateName(name) || !validator.validatePassword(pswd)) {
+      servletResponseWriter.renderPage("login.html", Collections.singletonMap("error", "Wrong input"), resp);
+      return;
+    }
+
     Optional<Account> possibleAccount = repository.getByName(name);
 
     if (!possibleAccount.isPresent()) {
