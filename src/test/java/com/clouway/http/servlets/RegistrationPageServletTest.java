@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.sql.Connection;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -51,8 +52,10 @@ public class RegistrationPageServletTest {
     request.setParameter("name", "John");
 
     context.checking(new Expectations() {{
+      oneOf(repo).setUpConnection(false, Connection.TRANSACTION_READ_COMMITTED);
       oneOf(repo).getByName("John");
       will(returnValue(Optional.of(new Account("John", "pwd", 0))));
+      oneOf(repo).rollback();
 
       oneOf(servletResponseWriter).renderPage("register.html", Collections.singletonMap("error", "Username is taken"), response);
     }});
@@ -66,10 +69,12 @@ public class RegistrationPageServletTest {
     request.setParameter("password", "password");
 
     context.checking(new Expectations() {{
+      oneOf(repo).setUpConnection(false, Connection.TRANSACTION_READ_COMMITTED);
       oneOf(repo).getByName("John");
       will(returnValue(Optional.empty()));
 
       oneOf(repo).register(new Account("John", "password", 0));
+      oneOf(repo).commit();
     }});
 
     servlet.doPost(request, response);

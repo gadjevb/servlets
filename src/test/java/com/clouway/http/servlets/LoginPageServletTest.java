@@ -14,6 +14,7 @@ import org.junit.Test;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.sql.Connection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -57,6 +58,7 @@ public class LoginPageServletTest {
     FakeHttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
+      oneOf(repo).setUpConnection(true, Connection.TRANSACTION_READ_COMMITTED);
       oneOf(repo).getByName("John");
       will(returnValue(Optional.of(new Account("John", "password", 0))));
     }});
@@ -76,6 +78,7 @@ public class LoginPageServletTest {
     final HttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
+      oneOf(repo).setUpConnection(true, Connection.TRANSACTION_READ_COMMITTED);
       oneOf(repo).getByName("John");
       will(returnValue(Optional.empty()));
 
@@ -96,6 +99,7 @@ public class LoginPageServletTest {
     HttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
+      oneOf(repo).setUpConnection(true, Connection.TRANSACTION_READ_COMMITTED);
       oneOf(repo).getByName("John");
       will(returnValue(Optional.of(new Account("John", "wrong", 0))));
 
@@ -116,6 +120,7 @@ public class LoginPageServletTest {
     FakeHttpServletResponse response = createResponse();
 
     context.checking(new Expectations() {{
+      oneOf(repo).setUpConnection(true, Connection.TRANSACTION_READ_COMMITTED);
       oneOf(repo).getByName("John");
       will(returnValue(Optional.of(new Account("John", "123123", 0))));
 

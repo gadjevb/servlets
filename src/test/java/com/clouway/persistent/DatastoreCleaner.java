@@ -3,6 +3,8 @@ package com.clouway.persistent;
 import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.datastore.DataStore;
 
+import java.sql.Connection;
+
 /**
  * @author Miroslav Genov (miroslav.genov@clouway.com)
  */
@@ -17,6 +19,7 @@ public class DatastoreCleaner {
   }
 
   public void perform() {
+    dataStore.setUpConnection(true, Connection.TRANSACTION_READ_COMMITTED);
     for (String each : table) {
       dataStore.update("truncate " + each);
     }

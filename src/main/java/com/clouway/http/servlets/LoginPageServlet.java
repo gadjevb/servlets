@@ -8,6 +8,7 @@ import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.adapter.jdbc.PersistentAccountRepository;
 import com.clouway.persistent.datastore.DataStore;
 import com.google.common.annotations.VisibleForTesting;
+import com.mysql.jdbc.Connection;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import javax.servlet.ServletException;
@@ -51,7 +52,7 @@ public class LoginPageServlet extends HttpServlet {
     String name = req.getParameter("name");
     String pswd = req.getParameter("password");
 
-
+    repository.setUpConnection(true, Connection.TRANSACTION_READ_COMMITTED);
     Optional<Account> possibleAccount = repository.getByName(name);
     RegexValidator nameValidator = new RegexValidator("[a-zA-Z]{1,50}");
 

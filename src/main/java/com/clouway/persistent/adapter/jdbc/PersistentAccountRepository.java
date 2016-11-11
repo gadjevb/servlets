@@ -22,6 +22,11 @@ public class PersistentAccountRepository implements AccountRepository {
   }
 
   @Override
+  public void setUpConnection(Boolean autoCommit, Integer isolationLevel) {
+    dataStore.setUpConnection(autoCommit, isolationLevel);
+  }
+
+  @Override
   public void register(Account account) {
     String query = "insert into accounts values(null,?,?,?)";
     dataStore.update(query, account.name, account.password, account.amount);
@@ -42,5 +47,15 @@ public class PersistentAccountRepository implements AccountRepository {
       }
     });
     return accounts.isEmpty() ? Optional.empty() : Optional.ofNullable(accounts.iterator().next());
+  }
+
+  @Override
+  public void commit() {
+    dataStore.commit();
+  }
+
+  @Override
+  public void rollback() {
+    dataStore.rollback();
   }
 }

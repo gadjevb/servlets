@@ -3,6 +3,7 @@ package com.clouway.persistent.adapter.jdbc;
 import com.clouway.persistent.DatastoreCleaner;
 import com.clouway.core.Account;
 import com.clouway.persistent.datastore.DataStore;
+import com.mysql.jdbc.Connection;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,15 +30,19 @@ public class PersistentAccountRepositoryTest {
   public void happyPath() throws Exception {
     Account account = new Account("John", "123", 123);
 
+    repo.setUpConnection(false, Connection.TRANSACTION_READ_COMMITTED);
     repo.register(account);
     Account actual = repo.getByName("John").get();
+    repo.commit();
 
     assertThat(actual, is(account));
   }
 
   @Test
   public void getUnknown() throws Exception {
+    repo.setUpConnection(false, Connection.TRANSACTION_READ_COMMITTED);
     Optional<Account > actual = repo.getByName("test");
+    repo.rollback();
 
     assertFalse(actual.isPresent());
   }

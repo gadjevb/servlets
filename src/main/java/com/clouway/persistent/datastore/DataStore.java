@@ -14,26 +14,33 @@ import java.util.List;
  */
 public class DataStore {
   private Provider<Connection> provider;
+  private Connection connection;
 
   public DataStore(Provider<Connection> provider) {
     this.provider = provider;
   }
 
+  public void setUpConnection(Boolean autoCommit, Integer isolationLevel) {
+    connection = provider.get();
+    try {
+      connection.setAutoCommit(autoCommit);
+      connection.setTransactionIsolation(isolationLevel);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
   public void update(String query, Object... objects) {
-    Connection connection = provider.get();
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       fillStatement(statement, objects);
       statement.execute();
     } catch (SQLException e) {
       throw new IllegalStateException("Connection to the database wasn't established", e);
-    } finally {
-      close(connection);
     }
   }
 
   public <T> List<T> fetchRows(String query, RowFetcher<T> rowFetcher) {
     List<T> list = Lists.newArrayList();
-    Connection connection = provider.get();
     try (PreparedStatement statement = connection.prepareStatement(query)) {
       ResultSet resultSet = statement.executeQuery(query);
       while (resultSet.next()) {
@@ -42,8 +49,6 @@ public class DataStore {
       }
     } catch (SQLException e) {
       throw new IllegalStateException("Connection to the database wasn't established");
-    } finally {
-      close(connection);
     }
     return list;
   }
@@ -51,6 +56,24 @@ public class DataStore {
   private void fillStatement(PreparedStatement statement, Object... objects) throws SQLException {
     for (int i = 0; i < objects.length; i++) {
       statement.setObject(i + 1, objects[i]);
+    }
+  }
+
+  public void commit() {
+    try {
+      connection.commit();
+      close(connection);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void rollback() {
+    try {
+      connection.rollback();
+      close(connection);
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
   }
 

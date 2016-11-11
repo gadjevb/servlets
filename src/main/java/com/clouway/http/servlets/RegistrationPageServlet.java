@@ -8,6 +8,7 @@ import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
 import com.clouway.persistent.adapter.jdbc.PersistentAccountRepository;
 import com.clouway.persistent.datastore.DataStore;
 import com.google.common.annotations.VisibleForTesting;
+import com.mysql.jdbc.Connection;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import javax.servlet.ServletException;
@@ -52,15 +53,17 @@ public class RegistrationPageServlet extends HttpServlet {
     RegexValidator nameValidator = new RegexValidator("[a-zA-Z]{1,50}");
     RegexValidator pswdValidator = new RegexValidator("[a-zA-Z_0-9]{6,18}");
 
+    repository.setUpConnection(false, Connection.TRANSACTION_READ_COMMITTED);
     if (!repository.getByName(name).isPresent() &&
             nameValidator.check(name) &&
             pswdValidator.check(pswd)) {
 
       Account account = new Account(name, pswd, 0);
       repository.register(account);
-
+      repository.commit();
       resp.sendRedirect("/login");
     } else {
+      repository.rollback();
       servletResponseWriter.renderPage("register.html", Collections.singletonMap("error", "Username is taken"), resp);
     }
   }
