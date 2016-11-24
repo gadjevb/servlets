@@ -2,11 +2,8 @@ package com.clouway.http.servlets;
 
 import com.clouway.core.Session;
 import com.clouway.core.SessionsRepository;
-import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
-import com.clouway.persistent.adapter.jdbc.PersistentSessionRepository;
-import com.clouway.persistent.datastore.DataStore;
-import com.google.common.annotations.VisibleForTesting;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -19,16 +16,11 @@ import java.util.Optional;
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
+@Singleton
 public class LogoutServlet extends HttpServlet {
   private SessionsRepository sessions;
 
-  @Ignore
-  @SuppressWarnings("unused")
-  public LogoutServlet() {
-    this.sessions = new PersistentSessionRepository(new DataStore(new ConnectionProvider()));
-  }
-
-  @VisibleForTesting
+  @Inject
   public LogoutServlet(SessionsRepository sessions) {
     this.sessions = sessions;
   }

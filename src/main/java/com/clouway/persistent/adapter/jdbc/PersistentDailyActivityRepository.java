@@ -3,6 +3,7 @@ package com.clouway.persistent.adapter.jdbc;
 import com.clouway.core.DailyActivityRepository;
 import com.clouway.persistent.datastore.DataStore;
 import com.clouway.persistent.datastore.RowFetcher;
+import com.google.inject.Inject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +17,7 @@ public class PersistentDailyActivityRepository implements DailyActivityRepositor
   private DataStore dataStore;
   private Map<String, Integer> transactions = new HashMap();
 
+  @Inject
   public PersistentDailyActivityRepository(DataStore dataStore) {
     this.dataStore = dataStore;
   }

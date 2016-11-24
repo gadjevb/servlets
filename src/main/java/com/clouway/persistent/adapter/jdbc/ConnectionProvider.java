@@ -1,11 +1,10 @@
 package com.clouway.persistent.adapter.jdbc;
 
 import com.clouway.core.ConnectionPool;
-import com.clouway.core.Provider;
-import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import com.google.inject.Provider;
 
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>

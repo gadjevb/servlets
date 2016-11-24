@@ -1,7 +1,9 @@
 package com.clouway.persistent.datastore;
 
-import com.clouway.core.Provider;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.name.Named;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -16,6 +18,7 @@ import java.util.List;
 public class DataStore {
   private Provider<Connection> provider;
 
+  @Inject
   public DataStore(Provider<Connection> provider) {
     this.provider = provider;
   }

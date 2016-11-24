@@ -1,5 +1,7 @@
 package com.clouway.core;
 
+import com.google.inject.Inject;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -7,10 +9,11 @@ import java.util.Map;
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
 
-public class HtmlTemplate implements Template{
+public class HtmlTemplate implements Template {
   private final Map<String, String> placeHolderToValue = new LinkedHashMap<String, String>();
   private final String templateValue;
 
+  @Inject
   public HtmlTemplate(String templateValue) {
     this.templateValue = templateValue;
   }

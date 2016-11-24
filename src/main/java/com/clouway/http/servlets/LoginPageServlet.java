@@ -1,12 +1,9 @@
 package com.clouway.http.servlets;
 
 import com.clouway.core.*;
-import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
-import com.clouway.persistent.adapter.jdbc.PersistentAccountRepository;
-import com.clouway.persistent.adapter.jdbc.PersistentSessionRepository;
-import com.clouway.persistent.datastore.DataStore;
-import com.google.common.annotations.VisibleForTesting;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -21,31 +18,20 @@ import java.util.Optional;
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
+@Singleton
 public class LoginPageServlet extends HttpServlet {
   private AccountRepository repository;
   private SessionsRepository sessions;
   private ServletPageRenderer servletResponseWriter;
   private MyClock clock;
-  private Provider uuid;
+  private Provider<String> uuid;
 
-  @Ignore
-  @SuppressWarnings("unused")
-  public LoginPageServlet() {
-    this(
-            new PersistentAccountRepository(new DataStore(new ConnectionProvider())),
-            new PersistentSessionRepository(new DataStore(new ConnectionProvider())),
-            new HtmlServletPageRenderer(),
-            new MyServerClock(),
-            new UuidGenerator()
-    );
-  }
-
-  @VisibleForTesting
+  @Inject
   public LoginPageServlet(AccountRepository repository,
                           SessionsRepository sessions,
                           ServletPageRenderer servletResponseWriter,
                           MyClock clock,
-                          Provider uuidGenerator) {
+                          Provider<String> uuidGenerator) {
     this.repository = repository;
     this.servletResponseWriter = servletResponseWriter;
     this.sessions = sessions;
@@ -78,7 +64,7 @@ public class LoginPageServlet extends HttpServlet {
     if (!pswd.equals(account.password) || !pswdValidator.check(pswd)) {
       servletResponseWriter.renderPage("login.html", Collections.singletonMap("error", "Wrong password"), resp);
     } else {
-      String sid = uuid.get().toString();
+      String sid = uuid.get();
       Date current = clock.getDate();
       Session session = new Session(sid, name, current);
       sessions.save(session);

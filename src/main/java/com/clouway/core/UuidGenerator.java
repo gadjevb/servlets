@@ -4,6 +4,7 @@ import com.google.common.io.BaseEncoding;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
+import com.google.inject.Provider;
 
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>

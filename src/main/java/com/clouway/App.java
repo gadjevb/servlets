@@ -1,22 +1,22 @@
 package com.clouway;
 
-import com.clouway.core.MyServerClock;
+import com.clouway.core.CoreModule;
 import com.clouway.core.SessionsCleaner;
 import com.clouway.http.server.JettyServer;
-import com.clouway.persistent.adapter.jdbc.ConnectionProvider;
-import com.clouway.persistent.adapter.jdbc.PersistentSessionRepository;
-import com.clouway.persistent.datastore.DataStore;
+import com.clouway.persistent.adapter.jdbc.RepositoryModule;
 import com.google.common.base.Strings;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @author Martin Milev <martinmariusmilev@gmail.com>
  */
 public class App {
   public static void main(String[] args) {
+    Injector injector = Guice.createInjector(new CoreModule(), new RepositoryModule());
 
     new Thread() {
-      private SessionsCleaner cleaner = new SessionsCleaner
-              (new PersistentSessionRepository(new DataStore(new ConnectionProvider())), new MyServerClock());
+      private SessionsCleaner cleaner = injector.getInstance(SessionsCleaner.class);
 
       @Override
       public void run() {
